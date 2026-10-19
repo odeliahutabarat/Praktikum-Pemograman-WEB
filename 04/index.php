@@ -5,14 +5,14 @@
  * Halaman utama dengan rendering server-side dinamis.
  */
 
-// memanggil file functions.php
+// Memanggil file functions.php
 require_once __DIR__ . '/includes/functions.php';
 
 // Ambil keyword pencarian jika ada
-    $page_title = 'Uji Fungsi Modular - Percobaan 1';
-    $daftar_mahasiswa = get_all_mahasiswa();
-    $total_semua = count_total_mahasiswa();
+
 // Percobaan 4-4 Langkah 2
+$keyword = trim($_GET['search'] ?? '');
+$daftar_mahasiswa = get_all_mahasiswa($keyword);
 
 $total_semua = count_total_mahasiswa();
 $total_tampil = count($daftar_mahasiswa);
@@ -110,13 +110,13 @@ require_once __DIR__ . '/includes/header.php';
             <tbody>
                 <?php if (empty($daftar_mahasiswa)): ?>
                     <!-- Percobaan 4-2 Langkah 4 -->
-                        <tr>
-                            <td colspan="8" class="empty-row">
-                                <?= !empty($keyword)
-                                ? 'Tidak ditemukan data mahasiswa dengan kata kunci "' .$keyword . '".'
-                                                : 'Belum ada data mahasiswa yang tersimpan.' ?>
-                            </td>
-                      </tr>
+                <tr>
+                    <td colspan="8" class="empty-row">
+                        <?= !empty($keyword)
+                            ? 'Tidak ditemukan data mahasiswa dengan kata kunci "' . htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8') . '".'
+                            : 'Belum ada data yang tersimpan.' ?>
+                    </td>
+                </tr>
                 <?php else: ?>
 
                     <!-- Percobaan 4-2 Langkah 3 -->
@@ -126,20 +126,19 @@ require_once __DIR__ . '/includes/header.php';
                             <td>
                                 <img src="img/avatar-default.svg" alt="Foto <?= htmlspecialchars($mhs['nama']) ?>" class="avatar-img" width="36" height="36">
                             </td>
-                            <td><strong><?= htmlspecialchars($mhs['npm']) ?></strong></td>
+                            <td><strong><?=htmlspecialchars($mhs['npm'])  ?></strong></td>
                             <td><?= htmlspecialchars($mhs['nama']) ?></td>
-                            <td><span class="badge"><?= htmlspecialchars($mhs['program_studi']) ?></span></td>
-                            <td><?= htmlspecialchars($mhs['angkatan']) ?></td>
-                            <td><a href="mailto:<?= htmlspecialchars($mhs['email']) ?>" class="link-email"><?= htmlspecialchars($mhs['email']) ?></a></td>
+                            <td><span class="badge"><?= htmlspecialchars($mhs['program_studi'], ENT_QUOTES, 'UTF-8') ?></span></td>
+                            <td><?= htmlspecialchars((string) $mhs['angkatan'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><a href="mailto:<?= htmlspecialchars($mhs['email'], ENT_QUOTES, 'UTF-8') ?>" class="link-email"><?= htmlspecialchars($mhs['email'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td>
                                 <!-- Percobaan 4-2 Langkah 5 -->
-                                <a href="proses_hapus.php?npm=<?=
-                                urlencode($mhs['npm']) ?>" 
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Apakah Anda yakin ingin mengahpus mahasiswa: <?=
-                                            htmlspecialchars(addslashes($mhs['nama'])) ?> (npm: <?=
-                                            htmlspecialchars($mhs['npm']) ?>)?');">
-                                            hapus </a>
+                                <a
+                                    href="proses_hapus.php?npm=<?= urlencode($mhs['npm']) ?>"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data mahasiswa ini?')">
+                                    Hapus
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -234,5 +233,4 @@ require_once __DIR__ . '/includes/header.php';
     </form>
 </section>
 
-<!-- memanggil file footer.php -->
-
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

@@ -12,47 +12,48 @@ if (session_status() === PHP_SESSION_NONE) {
 
 /**
  * Inisialisasi data mahasiswa pada session jika belum ada
- */
-function init_mahasiswa_session() {
-    if (($_SESSION['daftar_mahasiswa'])) {
-    $_SESSION['daftar_mahasiswa'] = [
-    [    
-        'npm' => '231010001',
+ */ 
+function init_mahasiswa_session() { 
+    if (!isset($_SESSION['daftar_mahasiswa'])) {
+        $_SESSION['daftar_mahasiswa'] = [
+        [
+        'npm' => '230101001',
         'nama' => 'Ahmad Fauzi',
-        'Program_Studi' => 'Teknik Informatika',
+        'program_studi' => 'Teknik Informatika',
         'angkatan' => 2023,
-        'email' => 'ahmad.fauzi@example.com'
-        ],
-        [
-        'npm' => '230101002',
+        'email' => 'ahmadfauzi@example.com'
+    ],
+    [ 
+       'npm' => '230101002',
         'nama' => 'Siti Nurhaliza',
-        'Program_Studi' => 'Sistem Ifnroamsi',
+        'program_studi' => 'Sistem Informasi',
         'angkatan' => 2023,
-        'email' => 'siti.nurhaliza@example.com'
-        ],
-        [
-        'npm' => '24101015',
-        'nama' => 'Budi Santosa',
-        'Program_Studi' => 'Teknologi Informasi',
-        'angkatan' => 2024,
+        'email' => 'sitinurhaliza@example.com' 
+    ],
+    [
+        'npm' => '230101015',
+        'nama' => 'Budi Santoso',
+        'program_studi' => 'Teknologi Informasi',
+        'angkatan' => 2023,
         'email' => 'budi.santoso@example.com'
-        ],
+    ]
     ];
     }
+    
 }
 
 /**
  * Sanitasi string input untuk keamanan XSS
  */
 function sanitize($data) {
-   return htmlspecialchars(trim($data), EN_QUOTES, 'UTF-8');
+    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+   
 }
-
+init_mahasiswa_session();
 /**
  * Mengambil semua data mahasiswa dengan opsi filter pencarian
  */
 function get_all_mahasiswa($keyword = '') {
-    init_mahasiswa_session();
     $data = $_SESSION['daftar_mahasiswa'];
 
     if (empty($keyword)) {
@@ -71,7 +72,7 @@ function get_all_mahasiswa($keyword = '') {
             $filtered[] = $mhs;
         }
     }
-    
+
     return $filtered;
 }
 
@@ -81,6 +82,7 @@ function get_all_mahasiswa($keyword = '') {
 function count_total_mahasiswa() {
     init_mahasiswa_session();
     return count($_SESSION['daftar_mahasiswa']);
+    
 }
 
 /**
@@ -93,9 +95,10 @@ function tambah_mahasiswa($npm, $nama, $program_studi, $angkatan, $email) {
     // Percobaan 4-3 Langkah 3
     $npm = sanitize($npm);
     $nama = sanitize($nama);
-    $program_Studi = sanitize($program_studi);
+    $program_studi = sanitize($program_studi);
     $angkatan = (int) $angkatan;
     $email = sanitize($email);
+    
 
     // Validasi Server-Side
     if (empty($npm) || empty($nama) || empty($program_studi) || empty($angkatan) || empty($email)) {
@@ -194,24 +197,25 @@ function hapus_mahasiswa($npm) {
 /**
  * Set flash message untuk feedback notifikasi pengguna
  */
-    function set_flash_message($type, $message) {
-        $_SESSION['flash_message'] = [
-            'type' => $type,
-            'message' => $message
-        ];
+function set_flash_message($type, $message) {
+    $_SESSION['flash_message'] = [
+        'type' => $type,
+        'message' => $message
+    ];
+}
+
+function get_flash_message() {
+    if (isset($_SESSION['flash_message'])) {
+        $flash = $_SESSION['flash_message'];
+        unset($_SESSION['flash_message']);
+        return $flash;
+
     }
-    
+    return null;
+}
 
 
 /**
  * Ambil dan hapus flash message
  */
-function get_flash_message() {
-        if (isset($_SESSION['flash_message'])){
-            $flash = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-            return $flash;
-        }
-        return null;
-    }
 
